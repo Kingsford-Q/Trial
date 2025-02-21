@@ -18,6 +18,9 @@
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
 }
+.right-panel{
+    -fx-padding-bottom:10px;
+}
 
 /* Title */
 .title-label {
@@ -35,11 +38,62 @@
     -fx-background-radius: 5px;
 }
 
+/* Chat Messages */
+.chat-messages {
+    -fx-background-color: transparent; /* Make background blend in */
+    -fx-padding: 10px;
+}
+
+
+/* Individual Chat Bubble */
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+.chat-bubble {
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-max-width: 70%;
+    -fx-wrap-text: true;
+    -fx-font-size: 14px;
+}
+
+/* User Message */
+.user-message {
+    -fx-background-color: #0f62fe; /* Blue */
+    -fx-text-fill: white;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-alignment: center-right;
+    -fx-max-width: 60%; /* Prevents long messages */
+    -fx-wrap-text: true;
+    -fx-margin: 5px 0; /* Spacing */
+}
+/* AI Message */
+.ai-message {
+    -fx-background-color: #444444; /* Dark Gray */
+    -fx-text-fill: white;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-alignment: center-left;
+    -fx-max-width: 60%;
+    -fx-wrap-text: true;
+    -fx-margin: 5px 0;
+}
+
+.chat-messages .list-cell {
+    -fx-padding: 5px 10px;
+}
+
 /* Chat Input Box */
 .chat-box {
     -fx-background-color: #222222;
-    -fx-padding: 10px;
-    -fx-border-radius: 20px;
+    -fx-padding: 20px;
+    -fx-border-radius: 15px;
     -fx-background-radius: 20px;
     -fx-border-color: #444444;
 }
@@ -50,17 +104,17 @@
     -fx-prompt-text-fill: #bbbbbb;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
-    -fx-padding: 10px;
+    -fx-padding: 15px;
 }
 
-/* Send Button inside TextField */
+/* Send Button */
 .send-button {
     -fx-background-color: #0f62fe;
     -fx-text-fill: white;
     -fx-background-radius: 20px;
     -fx-border-radius: 20px;
-    -fx-padding: 5px 10px;
-    -fx-font-size: 14px;
+    -fx-padding: 5px 15px;
+    -fx-font-size: 16px;
     -fx-cursor: hand;
 }
 .send-button:hover {
@@ -77,6 +131,7 @@
     -fx-padding: 5px;
     -fx-cursor: hand;
 }
+
 .upload-button:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-color: rgba(255, 255, 255, 0.2); /* Only change background */
 }

@@ -7,28 +7,29 @@
 <BorderPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.14-internal" 
             xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="com.example.trial.HelloController">
-    
+
     <center>
-        <HBox spacing="20" alignment="CENTER" styleClass="main-container">
+        <HBox spacing="10" alignment="CENTER" styleClass="main-container">
             
             <!-- Left Panel (Chat History) -->
-            <VBox spacing="15" alignment="TOP_CENTER" styleClass="left-panel">
+            <VBox spacing="15" alignment="TOP_CENTER" styleClass="left-panel" 
+                  prefWidth="300" minWidth="250" maxWidth="400" HBox.hgrow="SOMETIMES">
                 <Label text="AI Resume Analyzer" styleClass="title-label"/>
-                <ListView fx:id="chatHistory" styleClass="chat-history" prefHeight="400"/>
+                <ListView fx:id="chatHistory" styleClass="chat-history" prefHeight="400" VBox.vgrow="ALWAYS"/>
             </VBox>
-            
+
             <!-- Right Panel (Chat Box) -->
-            <VBox spacing="10" alignment="BOTTOM_CENTER" styleClass="right-panel">
-                <ListView fx:id="chatMessages" styleClass="chat-messages" prefHeight="300"/>
+            <VBox spacing="10" alignment="BOTTOM_CENTER" styleClass="right-panel" 
+                  prefWidth="700" minWidth="500" maxWidth="900" HBox.hgrow="ALWAYS">
+                <ListView fx:id="chatMessages" styleClass="chat-messages" prefHeight="300" VBox.vgrow="ALWAYS"/>
 
                 <!-- Chat Input and Upload Button -->
-                <HBox spacing="0" alignment="CENTER" styleClass="chat-box">
-                    <TextField fx:id="chatInput" promptText="Type a message..." styleClass="chat-input"/>
+                <HBox spacing="5" alignment="CENTER" styleClass="chat-box">
+                    <TextField fx:id="chatInput" promptText="Type a message..." styleClass="chat-input" HBox.hgrow="ALWAYS"/>
                     <Button text="📎" onAction="#onUploadResume" styleClass="upload-button"/>
                     <Button text="➡" onAction="#onSendMessage" styleClass="send-button"/>
                 </HBox>
             </VBox>
-            
         </HBox>
     </center>
 </BorderPane>

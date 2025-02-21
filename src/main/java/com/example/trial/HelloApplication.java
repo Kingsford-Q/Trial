@@ -13,7 +13,9 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/trial/hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 600);
         stage.setTitle("Group AI Resume Analyzer");
+        stage.setMaximized(true);
         stage.setScene(scene);
+        stage.setFullScreenExitHint("");
         stage.show();
     }
 
