@@ -9,8 +9,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -31,6 +33,10 @@ public class HelloController {
     @FXML
     private TextField chatInput;
 
+    @FXML
+    private Button newChatButton;
+
+    @FXML
     private File selectedFile;
 
     private final ObservableList<String> historyList = FXCollections.observableArrayList();
@@ -84,16 +90,21 @@ public class HelloController {
             }
         });
 
-        chatInput.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case ENTER -> {
+        Platform.runLater(() -> {
+            chatInput.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode() == KeyCode.ENTER) {
                     onSendMessage();
-                    event.consume();
+                    event.consume(); // Prevents default behavior like new line
+                } else {
+                    if (!chatInput.isFocused()) {
+                        chatInput.requestFocus(); // Focus the input field if unfocused
+                    }
                 }
-                default -> {
-                }
-            }
+            });
         });
+        
+
+        newChatButton.setOnAction(event -> startNewSession());
 
         // Start with an initial chat session
         startNewSession();
@@ -126,7 +137,6 @@ public class HelloController {
                     Thread.sleep(1000);
                     Platform.runLater(() -> addMessageToSession("AI: Processing your request..."));
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }).start();
         }
@@ -138,16 +148,20 @@ public class HelloController {
         chatSessions.put(sessionName, new ArrayList<>());
         currentSession = sessionName;
         chatHistory.getSelectionModel().select(sessionName);
+        chatMessages.getItems().clear();
     }
 
     private void addMessageToSession(String message) {
         if (currentSession == null) {
             startNewSession();
         }
-
+    
         chatSessions.get(currentSession).add(message);
-        loadChatMessages();
+        
+        // Ensure UI update is on JavaFX thread
+        Platform.runLater(this::loadChatMessages);
     }
+    
 
     private void loadChatMessages() {
         chatMessages.getItems().setAll(chatSessions.getOrDefault(currentSession, new ArrayList<>()));

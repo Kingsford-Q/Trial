@@ -15,6 +15,7 @@
             <VBox spacing="10" alignment="TOP_CENTER" styleClass="left-panel" 
                 prefWidth="300" minWidth="150" maxWidth="300" HBox.hgrow="SOMETIMES">
                 <Label text="AI Resume Analyzer" styleClass="title-label"/>
+                <Button fx:id="newChatButton" text="+" style="-fx-background-radius: 50%; -fx-min-width: 30px; -fx-min-height: 30px; -fx-font-size: 18px; -fx-background-color: #0f62fe; -fx-text-fill: white;"/>
                 <ListView fx:id="chatHistory" styleClass="chat-history" prefHeight="400" VBox.vgrow="ALWAYS"/>
             </VBox>
 
