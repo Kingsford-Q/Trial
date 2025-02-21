@@ -1,6 +1,7 @@
 package com.example.trial;
 
 import java.io.File;
+import java.util.*;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -8,14 +9,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.HBox;
 import javafx.scene.Node;
 import javafx.stage.Window;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class HelloController {
 
@@ -30,8 +33,21 @@ public class HelloController {
 
     private File selectedFile;
 
+    private final ObservableList<String> historyList = FXCollections.observableArrayList();
+    private final Map<String, List<String>> chatSessions = new HashMap<>();
+    private String currentSession = null;
+
     @FXML
     public void initialize() {
+        chatHistory.setItems(historyList);
+
+        chatHistory.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                currentSession = newVal;
+                loadChatMessages();
+            }
+        });
+
         chatMessages.setCellFactory(lv -> new ListCell<String>() {
             @Override
             protected void updateItem(String message, boolean empty) {
@@ -42,13 +58,13 @@ public class HelloController {
                 } else {
                     Label messageLabel = new Label(message.replaceFirst("^(You|AI): ", ""));
                     messageLabel.setWrapText(true);
-                    messageLabel.setMaxWidth(400); // Prevent overly long messages
-                    messageLabel.setMinHeight(Region.USE_PREF_SIZE); // Adjust height dynamically
+                    messageLabel.setMaxWidth(400);
+                    messageLabel.setMinHeight(Region.USE_PREF_SIZE);
                     messageLabel.setStyle(
                         "-fx-padding: 10px 15px; " +
                         "-fx-background-radius: 15px; " +
                         "-fx-border-radius: 15px; " +
-                        "-fx-background-color: #0f62fe; " + // Blue background for all messages
+                        "-fx-background-color: #0f62fe; " +
                         "-fx-text-fill: white;"
                     );
 
@@ -70,30 +86,31 @@ public class HelloController {
 
         chatInput.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case ENTER:
-                    onSendMessage(); // Call send function when Enter is pressed
-                    event.consume(); // Prevents new line in the text field
-                    break;
-                default:
-                    break;
+                case ENTER -> {
+                    onSendMessage();
+                    event.consume();
+                }
+                default -> {
+                }
             }
         });
-    }
 
+        // Start with an initial chat session
+        startNewSession();
+    }
 
     @FXML
     public void onUploadResume(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
 
-        // Fix: Get the current window from the button that was clicked
         Window window = ((Node) event.getSource()).getScene().getWindow();
         File file = fileChooser.showOpenDialog(window);
 
         if (file != null) {
             selectedFile = file;
-            chatMessages.getItems().add("You uploaded: " + file.getName());
-            chatInput.setPromptText("File: " + file.getName());  // Display filename in input field
+            addMessageToSession("You uploaded: " + file.getName());
+            chatInput.setPromptText("File: " + file.getName());
         }
     }
 
@@ -101,18 +118,38 @@ public class HelloController {
     public void onSendMessage() {
         String message = chatInput.getText().trim();
         if (!message.isEmpty()) {
-            chatMessages.getItems().add("You: " + message);
+            addMessageToSession("You: " + message);
             chatInput.clear();
 
-            // Simulating AI response with a delay but ensuring UI updates happen on the JavaFX thread
             new Thread(() -> {
                 try {
-                    Thread.sleep(1000); // Simulating AI processing
-                    Platform.runLater(() -> chatMessages.getItems().add("AI: Processing your request..."));
+                    Thread.sleep(1000);
+                    Platform.runLater(() -> addMessageToSession("AI: Processing your request..."));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }).start();
         }
+    }
+
+    private void startNewSession() {
+        String sessionName = "Session " + (historyList.size() + 1);
+        historyList.add(sessionName);
+        chatSessions.put(sessionName, new ArrayList<>());
+        currentSession = sessionName;
+        chatHistory.getSelectionModel().select(sessionName);
+    }
+
+    private void addMessageToSession(String message) {
+        if (currentSession == null) {
+            startNewSession();
+        }
+
+        chatSessions.get(currentSession).add(message);
+        loadChatMessages();
+    }
+
+    private void loadChatMessages() {
+        chatMessages.getItems().setAll(chatSessions.getOrDefault(currentSession, new ArrayList<>()));
     }
 }

@@ -1,10 +1,17 @@
-/* styles.css */
+@font-face {
+    font-family: "Inter Regular";
+    src: url("fonts/Inter-Regular.otf");
+}
 
-/* General Styling */
+@font-face {
+    font-family: "Inter Bold";
+    src: url("fonts/Inter-Bold.otf");
+}
+
 .root {
     -fx-background-color: #000000; /* Black background */
     -fx-text-fill: white;
-    -fx-font-family: "Arial";
+    -fx-font-family: "Inter Regular";
 }
 
 /* Main Containers */
@@ -27,6 +34,7 @@
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
+    -fx-font-family: "Inter Bold";
 }
 
 /* Chat History */
@@ -36,6 +44,8 @@
     -fx-border-color: #444444;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
+    -fx-opacity: 1.0 !important;
+    -fx-padding:15px;
 }
 
 /* Chat Messages */
@@ -124,7 +134,7 @@
 /* Upload Button */
 .upload-button {
     -fx-background-color: transparent;
-    -fx-border-color: white;
+    -fx-border-color: #c0c0c0;
     -fx-text-fill: white;
     -fx-font-size: 18px;
     -fx-border-radius: 50%;
@@ -134,4 +144,26 @@
 
 .upload-button:hover {
     -fx-background-color: rgba(255, 255, 255, 0.2); /* Only change background */
+}
+
+
+.chat-messages, .chat-input, .chat-history {
+    -fx-font-family: "Inter Regular";
+    -fx-font-size: 15px;
+}
+.chat-history {
+    -fx-font-family: "Inter Bold";
+    -fx-font-size: 15px;
+}
+
+.list-view {
+    -fx-opacity: 1.0 !important; /* Ensure the ListView never dims */
+}
+
+.list-view:focused {
+    -fx-opacity: 1.0 !important; /* Maintain opacity when focused */
+}
+
+.list-view .list-cell {
+    -fx-opacity: 1.0 !important; /* Ensure list items never fade */
 }
