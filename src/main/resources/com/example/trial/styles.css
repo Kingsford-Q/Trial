@@ -167,3 +167,53 @@
 .list-view .list-cell {
     -fx-opacity: 1.0 !important; /* Ensure list items never fade */
 }
+
+
+/* General scrollbar styling */
+.scroll-bar {
+    -fx-background-color:rgb(49, 48, 48);
+}
+
+/* Vertical scrollbar track */
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: #f0f0f0;  /* Light gray track */
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+/* Vertical scrollbar thumb (the draggable part) */
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black */
+    -fx-background-radius: 5px;
+}
+
+/* Hover effect */
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.5); /* Darker on hover */
+}
+
+/* Pressed effect */
+.scroll-bar:vertical .thumb:pressed,
+.scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.7); /* Even darker when pressed */
+}
+
+/* Hide scrollbar buttons (up/down or left/right arrows) */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Make the scrollbar thinner */
+.scroll-bar:vertical {
+    -fx-pref-width: 8px;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 8px;
+}
