@@ -1,8 +1,5 @@
 package com.example.trial;
 
-import java.io.File;
-import java.util.*;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +17,11 @@ import javafx.scene.Node;
 import javafx.stage.Window;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.*;
 
 public class HelloController {
 
@@ -41,6 +43,8 @@ public class HelloController {
     private final ObservableList<String> historyList = FXCollections.observableArrayList();
     private final Map<String, List<String>> chatSessions = new HashMap<>();
     private String currentSession = null;
+    
+    private static final String SERVER_URL = "http://127.0.0.1:5000/upload"; // Flask server URL
 
     @FXML
     public void initialize() {
@@ -101,7 +105,6 @@ public class HelloController {
                 }
             });
         });
-        
 
         newChatButton.setOnAction(event -> startNewSession());
 
@@ -121,6 +124,57 @@ public class HelloController {
             selectedFile = file;
             addMessageToSession("You uploaded: " + file.getName());
             chatInput.setPromptText("File: " + file.getName());
+
+            // Upload file to Flask server
+            new Thread(() -> uploadFileToServer(file)).start();
+        }
+    }
+
+    private void uploadFileToServer(File file) {
+        try {
+            URL url = new URL(SERVER_URL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=*****");
+
+            OutputStream outputStream = connection.getOutputStream();
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
+
+            // Send file
+            writer.append("--*****\r\n");
+            writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + file.getName() + "\"\r\n");
+            writer.append("Content-Type: application/pdf\r\n\r\n");
+            writer.flush();
+
+            Files.copy(file.toPath(), outputStream);
+            outputStream.flush();
+
+            writer.append("\r\n--*****--\r\n");
+            writer.flush();
+            writer.close();
+
+            // Read response
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line).append("\n");
+                }
+                reader.close();
+
+                // Display extracted resume text and entities
+                Platform.runLater(() -> addMessageToSession("AI: " + response.toString()));
+
+            } else {
+                Platform.runLater(() -> addMessageToSession("AI: Error uploading file."));
+            }
+
+            connection.disconnect();
+        } catch (Exception e) {
+            Platform.runLater(() -> addMessageToSession("AI: Error: " + e.getMessage()));
         }
     }
 
@@ -154,13 +208,10 @@ public class HelloController {
         if (currentSession == null) {
             startNewSession();
         }
-    
+
         chatSessions.get(currentSession).add(message);
-        
-        // Ensure UI update is on JavaFX thread
         Platform.runLater(this::loadChatMessages);
     }
-    
 
     private void loadChatMessages() {
         chatMessages.getItems().setAll(chatSessions.getOrDefault(currentSession, new ArrayList<>()));
